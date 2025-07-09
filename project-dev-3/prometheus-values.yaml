@@ -32,24 +32,16 @@ grafana:
     limits:
       cpu: 200m
       memory: 256Mi
-  dashboardProviders:
-    dashboardproviders.yaml:
-      apiVersion: 1
-      providers:
-      - name: 'default'
-        orgId: 1
-        folder: ''
-        type: file
-        disableDeletion: false
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards
+
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      folder: /
+      searchNamespace: ALL
 
 alertmanager:
   enabled: true
-  service:
-    type: NodePort
-    nodePort: 30902
   config:
     global:
       resolve_timeout: 5m
@@ -61,3 +53,6 @@ alertmanager:
       receiver: 'null'
     receivers:
     - name: 'null'
+  service:
+    type: NodePort
+    nodePort: 30902 

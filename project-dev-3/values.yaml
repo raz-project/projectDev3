@@ -1,0 +1,18 @@
+namespace: project-monitoring
+
+nginx:
+  image: nginx:latest
+  service:
+    type: NodePort
+    nodePort: 30903
+
+kube-prometheus-stack:
+  grafana:
+    service:
+      type: NodePort
+      nodePort: 30900
+
+  prometheus:
+    service:
+      type: NodePort
+      nodePort: 30901

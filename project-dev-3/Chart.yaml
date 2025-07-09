@@ -1,5 +1,5 @@
 apiVersion: v2
-name: project3
+name: project-dev-3
 description: Monitoring With Prometheus & Grafana Automation for K3s
 
 # A chart can be either an 'application' or a 'library' chart.
@@ -23,8 +23,8 @@ version: 0.1.0
 # It is recommended to use it with quotes.
 appVersion: "1.16.0"
 
-
 dependencies:
   - name: kube-prometheus-stack
-    version: "56.6.2"
-    repository: "https://prometheus-community.github.io/helm-charts"
+    version: "58.0.0"  # Or whatever is latest and compatible
+    repository: https://prometheus-community.github.io/helm-charts
+
