@@ -1,0 +1,1 @@
+chmod +x install-project-dev-3.sh
