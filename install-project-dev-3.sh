@@ -20,3 +20,14 @@ kubectl get pods -n $NAMESPACE
 
 echo "Services with NodePorts:"
 kubectl get svc -n $NAMESPACE | grep -E 'grafana|prometheus|nginx'
+
+echo "Finding nginx pod..."
+NGINX_POD=$(kubectl get pods -n $NAMESPACE -l app=nginx -o jsonpath="{.items[0].metadata.name}")
+
+if [ -z "$NGINX_POD" ]; then
+  echo "Error: NGINX pod not found in namespace $NAMESPACE"
+  exit 1
+fi
+
+echo "Curling index.html from nginx pod on internal port 80..."
+kubectl exec -n $NAMESPACE "$NGINX_POD" -- curl -s http://localhost/index.html
