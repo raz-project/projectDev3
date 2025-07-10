@@ -28,22 +28,18 @@ jobs:
             curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
           fi
 
-      - name: Run monitoring install.sh script
+      - name: Make install/uninstall scripts executable
         run: |
-          chmod +x install.sh
-          ./install.sh
+          chmod +x install-project-dev-3.sh uninstall-project-dev-3.sh
+
+      - name: Run install-project-dev-3.sh
+        run: ./install-project-dev-3.sh
 
       - name: Wait for monitoring pods to be ready
         run: |
           kubectl wait --for=condition=Ready pods --all -n project-monitoring --timeout=180s
           kubectl get pods -n project-monitoring
 
-      - name: Test access to Grafana or Prometheus NodePort (optional)
-        run: |
-          echo "Testing access to NodePort (example on port 30090)..."
-          curl -s http://localhost:30090 || echo "Port not accessible"
+      - name: Run uninstall-project-dev-3.sh
+        run: ./uninstall-project-dev-3.sh
 
-      - name: Run monitoring uninstall.sh script
-        run: |
-          chmod +x uninstall.sh
-          ./uninstall.sh
