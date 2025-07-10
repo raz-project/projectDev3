@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Install K3s (if not already installed)
@@ -18,19 +18,25 @@ jobs:
             echo "K3s already installed"
           fi
 
-      - name: Export kubeconfig
+      - name: Set up kubeconfig for current user
         run: |
-          echo "KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> $GITHUB_ENV
+          mkdir -p ~/.kube
+          sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+          sudo chown $USER ~/.kube/config
+          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
-      - name: Install Helm (if needed)
+      - name: Install Helm (if not already installed)
         run: |
           if ! command -v helm &> /dev/null; then
             curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+          else
+            echo "Helm already installed"
           fi
 
       - name: Make install/uninstall scripts executable
         run: |
           chmod +x install-project-dev-3.sh uninstall-project-dev-3.sh
+          echo "Scripts are now executable."
 
       - name: Run install-project-dev-3.sh
         run: ./install-project-dev-3.sh
@@ -42,4 +48,3 @@ jobs:
 
       - name: Run uninstall-project-dev-3.sh
         run: ./uninstall-project-dev-3.sh
-
