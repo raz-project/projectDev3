@@ -8,9 +8,12 @@ nginx:
 
 kube-prometheus-stack:
   grafana:
+    adminUser: admin
+    adminPassword: admin
     service:
       type: NodePort
       nodePort: 30900
+
 
   prometheus:
     service:
