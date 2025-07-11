@@ -48,6 +48,13 @@ jobs:
 
       - name: Port-forward Grafana and run get-grafana-dash.sh
         run: |
+          # Define cleanup function
+          cleanup() {
+            echo "Cleaning up port-forward..."
+            kill $PORT_FORWARD_PID 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
           # Run port-forward in background
           kubectl port-forward -n project-monitoring svc/grafana 30900:80 &
           PORT_FORWARD_PID=$!
@@ -57,9 +64,6 @@ jobs:
 
           # Run script to fetch dashboards
           ./get-grafana-dash.sh
-
-          # Clean up port-forward
-          kill $PORT_FORWARD_PID
 
       - name: Run uninstall-project-dev-3.sh
         run: ./uninstall-project-dev-3.sh
