@@ -33,9 +33,9 @@ jobs:
             echo "Helm already installed"
           fi
 
-      - name: Make install/uninstall scripts executable
+      - name: Make scripts executable
         run: |
-          chmod +x install-project-dev-3.sh uninstall-project-dev-3.sh
+          chmod +x install-project-dev-3.sh uninstall-project-dev-3.sh get-grafana-dash.sh
           echo "Scripts are now executable."
 
       - name: Run install-project-dev-3.sh
@@ -45,6 +45,21 @@ jobs:
         run: |
           kubectl wait --for=condition=Ready pods --all -n project-monitoring --timeout=180s
           kubectl get pods -n project-monitoring
+
+      - name: Port-forward Grafana and run get-grafana-dash.sh
+        run: |
+          # Run port-forward in background
+          kubectl port-forward -n project-monitoring svc/grafana 30900:80 &
+          PORT_FORWARD_PID=$!
+
+          # Wait briefly to ensure port-forward is active
+          sleep 10
+
+          # Run script to fetch dashboards
+          ./get-grafana-dash.sh
+
+          # Clean up port-forward
+          kill $PORT_FORWARD_PID
 
       - name: Run uninstall-project-dev-3.sh
         run: ./uninstall-project-dev-3.sh
