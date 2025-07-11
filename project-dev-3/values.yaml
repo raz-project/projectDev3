@@ -1,5 +1,8 @@
 namespace: project-monitoring
 
+alerts:
+  enabled: true
+
 nginx:
   image: nginx:latest
   service:
@@ -13,9 +16,18 @@ kube-prometheus-stack:
     service:
       type: NodePort
       nodePort: 30900
-
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClassName: local-path  # <- or your actual storage class
+      accessModes:
+        - ReadWriteOnce
+    sidecar:
+      dashboards:
+        enabled: true
 
   prometheus:
     service:
       type: NodePort
       nodePort: 30901
+

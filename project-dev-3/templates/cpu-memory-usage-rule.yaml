@@ -1,0 +1,69 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: resource-usage-alerts
+  namespace: {{ .Values.namespace | default "project-monitoring" }}
+  labels:
+    release: {{ .Release.Name }}
+spec:
+  groups:
+    - name: resource.rules
+      rules:
+        - alert: HighCpuUsage
+          expr: |
+            (
+              sum by (pod, namespace) (
+                rate(container_cpu_usage_seconds_total{container!="", image!=""}[5m])
+              )
+              /
+              sum by (pod, namespace) (
+                kube_pod_container_resource_limits_cpu_cores{resource="cpu"}
+              )
+            ) > 0.7
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High CPU usage detected on pod {{`{{ $labels.pod }}`}}"
+            description: "Pod {{`{{ $labels.pod }}`}} in namespace {{`{{ $labels.namespace }}`}} is using over 70% CPU for more than 2 minutes."
+
+        - alert: HighMemoryUsage
+          expr: |
+            (
+              sum by (pod, namespace) (
+                container_memory_usage_bytes{container!="", image!=""}
+              )
+              /
+              sum by (pod, namespace) (
+                kube_pod_container_resource_limits_memory_bytes{resource="memory"}
+              )
+            ) > 0.6
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High memory usage detected on pod {{`{{ $labels.pod }}`}}"
+            description: "Pod {{`{{ $labels.pod }}`}} in namespace {{`{{ $labels.namespace }}`}} is using over 60% memory for more than 2 minutes."
+
+        - alert: PodCrashLoop
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="project-monitoring"}[5m]) > 3
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{`{{ $labels.pod }}`}} is restarting too frequently"
+            description: "Pod {{`{{ $labels.pod }}`}} in namespace {{`{{ $labels.namespace }}`}} restarted more than 3 times in the last 5 minutes. Possible CrashLoopBackOff."
+
+        - alert: PodTerminatedWithError
+          expr: |
+            kube_pod_container_status_terminated_reason{
+              namespace="project-monitoring",
+              reason="Error"
+            } == 1
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{`{{ $labels.pod }}`}} terminated with error"
+            description: "Pod {{`{{ $labels.pod }}`}} in namespace {{`{{ $labels.namespace }}`}} has terminated with reason: Error."

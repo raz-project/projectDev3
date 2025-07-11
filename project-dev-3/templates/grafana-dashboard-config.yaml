@@ -6,4 +6,4 @@ metadata:
   labels:
     grafana_dashboard: "1"
 data:
-  complex-app.json: |
+  complex-app.json.base64: {{ .Files.Get "grafana-dashboard.json" | b64enc | quote }}
