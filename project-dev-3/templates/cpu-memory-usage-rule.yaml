@@ -16,4 +16,4 @@ spec:
             severity: warning
           annotations:
             summary: "Test alert fired on pod {{$labels.pod}}"
-            description: "This is a test description including pod {{$labels.pod}} and namespace {{$labels.namespace}}."
+description: "This is a test description including pod {{$labels.pod}} and namespace {{$labels.namespace}}."
