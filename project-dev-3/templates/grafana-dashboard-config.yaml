@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-dashboard-config
-  namespace: "{{ .Values.namespace }}"
+  namespace: "{{ .Values.namespace | default }}"
   labels:
     grafana_dashboard: "1"
 data:
