@@ -6,4 +6,4 @@ metadata:
   labels:
     grafana_dashboard: "1"
 data:
-grafana-dashboard.json: {{ .Files.Get "grafana-dashboard.json" | toJson }}
+grafana-dashboard.json: {{ .Files.Get "grafana-dashboard.json" }}
