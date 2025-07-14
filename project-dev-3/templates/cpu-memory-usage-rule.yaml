@@ -2,10 +2,8 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: resource-usage-alerts
-  namespace: { { .Values.namespace | default "project-monitoring" } }
-  labels:
-    release: { { .Release.Name } }
-spec:
+  namespace: {{ .Values.namespace | default "project-monitoring" }}
+release: {{ .Release.Name }}
   groups:
     - name: resource.rules
       rules:
