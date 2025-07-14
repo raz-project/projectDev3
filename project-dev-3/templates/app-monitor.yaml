@@ -9,6 +9,6 @@ spec:
     matchLabels:
       app: complex-app
   endpoints:
-  - port: http
-    interval: 15s
-    path: /metrics
+    - port: http
+      interval: 15s
+      path: /metrics
