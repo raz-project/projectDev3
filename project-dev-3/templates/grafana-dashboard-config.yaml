@@ -2,9 +2,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-dashboard-config
-  namespace: "{{ .Values.namespace }}"
+  namespace: {{ .Values.namespace }}
   labels:
     grafana_dashboard: "1"
 data:
   grafana-dashboard.json: |
-    {{ .Files.Get "grafana-dashboard.json" | indent 4 }}
+   {{ .Files.Get "grafana-dashboard.json" | indent 4 }}
