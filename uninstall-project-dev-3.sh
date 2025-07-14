@@ -4,7 +4,8 @@ set -e
 NAMESPACE="project-monitoring"
 RELEASE="project-dev-3"
 
-# Delete permntly and dashbords will gone
+echo "Cleaning up Helm release components without losing Grafana dashboards..."
+
 # Optional: uncomment if you want full uninstall (will delete PVC)
 # echo "Uninstalling Helm release..."
 # helm uninstall $RELEASE -n $NAMESPACE
@@ -12,7 +13,6 @@ RELEASE="project-dev-3"
 # Optionally delete namespace if you're done (deletes everything, including PVCs!)
 # echo "Deleting namespace..."
 # kubectl delete namespace $NAMESPACE
-echo "Cleaning up Helm release components without losing Grafana dashboards..."
 
 # Delete Deployments
 echo "Deleting Deployments..."
