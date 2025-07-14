@@ -2,9 +2,9 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: resource-usage-alerts
-  namespace: { { .Values.namespace | default "project-monitoring" } }
+  namespace: "{{ .Values.namespace | default }}"
   labels:
-    release: { { .Release.Name } }
+    release: "{{ .Release.Name }}"
 spec:
   groups:
     - name: resource.rules
@@ -15,5 +15,5 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: "Test alert fired on pod {{`{{ $labels.pod }}`}}"
-            description: "This is a test description including pod {{`{{ $labels.pod }}`}} and namespace {{`{{ $labels.namespace }}`}}."
+            summary: "Test alert fired on pod {{ $labels.pod }}"
+            description: "This is a test description including pod {{ $labels.pod }} and namespace {{ $labels.namespace }}"
