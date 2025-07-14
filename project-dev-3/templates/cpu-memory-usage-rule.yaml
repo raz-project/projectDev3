@@ -1,17 +1,17 @@
-apiVersion: monitoring.coreos.com/v1 # Specifies the API version for PrometheusRule, part of the Prometheus Operator.
-kind: PrometheusRule # Kind of resource, which defines the set of alerting rules.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
 metadata:
-  name: resource-usage-alerts # Name of the PrometheusRule. This will be used to identify the set of rules.
-  namespace: { { .Values.namespace | default "project-monitoring" } } # The namespace for this rule, dynamically set from Helm values or default to "project-monitoring".
+  name: resource-usage-alerts
+  namespace: { { .Values.namespace | default "project-monitoring" } }
   labels:
-    release: { { .Release.Name } } # The release name for Helm, used to associate this rule with a specific Helm release.
+    release: { { .Release.Name } }
 
 spec:
   groups:
-    - name: resource.rules # Name of the group containing all resource usage-related alerting rules.
+    - name: resource.rules
       rules:
         # High CPU Usage Alert Rule
-        - alert: HighCpuUsage # Name of the alert.
+        - alert: HighCpuUsage
           expr: |
             (
               sum by (pod, namespace) (
@@ -21,16 +21,16 @@ spec:
               sum by (pod, namespace) (
                 kube_pod_container_resource_limits_cpu_cores{resource="cpu"}
               )
-            ) > 0.7  # Trigger the alert when CPU usage is over 70% for more than 2 minutes.
-          for: 2m # The duration for which the condition must be met before firing the alert.
+            ) > 0.7
+          for: 2m
           labels:
-            severity: warning # Severity level for this alert.
+            severity: warning
           annotations:
-            summary: "High CPU usage detected on pod {{`{{ $labels.pod }}`}}" # Brief summary of the alert.
-            description: "Pod {{`{{ $labels.pod }}`}} in namespace {{`{{ $labels.namespace }}`}} is using over 70% CPU for more than 2 minutes." # Detailed description of the alert, including pod and namespace.
+            summary: "High CPU usage detected on pod {{$labels.pod}}"
+            description: "Pod {{$labels.pod}} in namespace {{$labels.namespace}} is using over 70% CPU for more than 2 minutes."
 
         # High Memory Usage Alert Rule
-        - alert: HighMemoryUsage # Name of the alert.
+        - alert: HighMemoryUsage
           expr: |
             (
               sum by (pod, namespace) (
@@ -40,35 +40,35 @@ spec:
               sum by (pod, namespace) (
                 kube_pod_container_resource_limits_memory_bytes{resource="memory"}
               )
-            ) > 0.6  # Trigger the alert when memory usage is over 60% for more than 2 minutes.
-          for: 2m # The duration for which the condition must be met before firing the alert.
+            ) > 0.6
+          for: 2m
           labels:
-            severity: warning # Severity level for this alert.
+            severity: warning
           annotations:
-            summary: "High memory usage detected on pod {{`{{ $labels.pod }}`}}" # Brief summary of the alert.
-            description: "Pod {{`{{ $labels.pod }}`}} in namespace {{`{{ $labels.namespace }}`}} is using over 60% memory for more than 2 minutes." # Detailed description of the alert, including pod and namespace.
+            summary: "High memory usage detected on pod {{$labels.pod}}"
+            description: "Pod {{$labels.pod}} in namespace {{$labels.namespace}} is using over 60% memory for more than 2 minutes."
 
         # Pod Crash Loop Alert Rule
-        - alert: PodCrashLoop # Name of the alert.
+        - alert: PodCrashLoop
           expr: |
-            increase(kube_pod_container_status_restarts_total{namespace="project-monitoring"}[5m]) > 3  # Trigger the alert if a pod restarts more than 3 times in the last 5 minutes.
-          for: 2m # The duration for which the condition must be met before firing the alert.
+            increase(kube_pod_container_status_restarts_total{namespace="project-monitoring"}[5m]) > 3
+          for: 2m
           labels:
-            severity: critical # Severity level for this alert.
+            severity: critical
           annotations:
-            summary: "Pod {{`{{ $labels.pod }}`}} is restarting too frequently" # Brief summary of the alert.
-            description: "Pod {{`{{ $labels.pod }}`}} in namespace {{`{{ $labels.namespace }}`}} restarted more than 3 times in the last 5 minutes. Possible CrashLoopBackOff." # Detailed description of the alert, including pod and namespace.
+            summary: "Pod {{$labels.pod}} is restarting too frequently"
+            description: "Pod {{$labels.pod}} in namespace {{$labels.namespace}} restarted more than 3 times in the last 5 minutes. Possible CrashLoopBackOff."
 
         # Pod Terminated with Error Alert Rule
-        - alert: PodTerminatedWithError # Name of the alert.
+        - alert: PodTerminatedWithError
           expr: |
             kube_pod_container_status_terminated_reason{
               namespace="project-monitoring",
               reason="Error"
-            } == 1  # Trigger the alert if a pod in the "project-monitoring" namespace terminated with the reason "Error".
-          for: 1m # The duration for which the condition must be met before firing the alert.
+            } == 1
+          for: 1m
           labels:
-            severity: warning # Severity level for this alert.
+            severity: warning
           annotations:
-            summary: "Pod {{`{{ $labels.pod }}`}} terminated with error" # Brief summary of the alert.
-            description: "Pod {{`{{ $labels.pod }}`}} in namespace {{`{{ $labels.namespace }}`}} has terminated with reason: Error." # Detailed description of the alert, including pod and namespace.
+            summary: "Pod {{$labels.pod}} terminated with error"
+            description: "Pod {{$labels.pod}} in namespace {{$labels.namespace}} has terminated with reason: Error."
