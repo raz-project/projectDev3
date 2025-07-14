@@ -1,33 +1,57 @@
+# Namespace where all resources will be deployed
 namespace: project-monitoring
 
+# Enable or disable alerting within the monitoring stack
 alerts:
-  enabled: true
+  enabled: true # Set to 'true' to enable alerts, or 'false' to disable
 
+# Configuration for the NGINX deployment
 nginx:
+  # Docker image for the NGINX container. Can specify other versions if needed.
   image: nginx:latest
+
   service:
+    # Kubernetes service type for exposing NGINX. Options include ClusterIP, NodePort, LoadBalancer, etc.
     type: NodePort
+    # The port on each node where NGINX can be accessed externally
     nodePort: 30903
 
+# Configuration for the kube-prometheus-stack, which includes Prometheus and Grafana
 kube-prometheus-stack:
+  # Grafana configuration settings
   grafana:
+    # Admin user for accessing Grafana dashboard
     adminUser: admin
+    # Admin password for accessing Grafana dashboard
     adminPassword: admin
+
     service:
+      # Kubernetes service type for exposing Grafana. Here it's NodePort for external access
       type: NodePort
+      # The port on each node where Grafana can be accessed externally
       nodePort: 30900
+
+    # Persistence settings for Grafana to retain data across pod restarts
     persistence:
-      enabled: true
-      size: 1Gi
-      storageClassName: local-path  # <- or your actual storage class
+      enabled: true # Set to true to enable persistent storage
+      size: 1Gi # Size of the persistent storage volume (1Gi is default, adjust as needed)
+      # Storage class to use for persistent volume provisioning (e.g., local-path, standard)
+      storageClassName: local-path # Change to your storage class if necessary
       accessModes:
-        - ReadWriteOnce
+        - ReadWriteOnce # Access mode: only one node can read/write at a time
+
+    # Sidecar configuration for loading custom dashboards into Grafana
     sidecar:
       dashboards:
-        enabled: true
+        enabled: true # Set to 'true' to enable the automatic dashboard sidecar
 
+  # Prometheus configuration settings
   prometheus:
     service:
+      # Kubernetes service type for exposing Prometheus. Here it's NodePort for external access
       type: NodePort
+      # The port on each node where Prometheus can be accessed externally
       nodePort: 30901
-
+# Note:
+# You can adjust the values such as 'nodePort', 'size', and 'storageClassName'
+# depending on your specific infrastructure and use case.

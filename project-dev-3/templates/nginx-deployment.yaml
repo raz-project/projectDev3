@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
-  namespace: {{ .Values.namespace }}
+  name: nginx # Name of the deployment. In this case, it's 'nginx'
+  namespace: { { .Values.namespace } } # The Kubernetes namespace where the deployment will reside. The value is fetched from the Helm values.yaml.
 spec:
-  replicas: 1
+  replicas: 1 # Defines how many replicas of the NGINX pod should be running. In this case, one replica.
   selector:
     matchLabels:
-      app: nginx
+      app: nginx # Selector to match the NGINX pods based on the label. Ensures the service targets the correct pods.
   template:
     metadata:
       labels:
-        app: nginx
+        app: nginx # The label attached to the pod template. Pods with this label will be part of this deployment.
     spec:
       containers:
-      - name: nginx
-        image: {{ .Values.nginx.image }}
-        ports:
-        - containerPort: 80
-        volumeMounts:
-        - name: project-config-volume
-          mountPath: /usr/share/nginx/html
+        - name: nginx # Name of the container. It's named 'nginx' in this case.
+          image: { { .Values.nginx.image } } # The Docker image used for the container. This will be dynamically replaced with the value from 'values.yaml' (e.g., nginx:latest).
+          ports:
+            - containerPort: 80 # Exposes port 80 on the container, which is the default NGINX port.
+          volumeMounts:
+            - name: project-config-volume # Name of the volume that will be mounted inside the container.
+              mountPath: /usr/share/nginx/html # The directory inside the container where the volume will be mounted. For NGINX, it's the web root directory.
       volumes:
-      - name: project-config-volume
-        configMap:
-          name: project-nginx-config
+        - name: project-config-volume # Name of the volume defined for the pod.
+          configMap:
+            name: project-nginx-config # The ConfigMap that provides configuration files (e.g., NGINX config files) to be used in the volume.

@@ -19,7 +19,40 @@ data:
 
         h1 {
           color: #333;
+        }apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: project-nginx-config  # The name of the ConfigMap. This will be used to reference the config in the NGINX deployment.
+  namespace: {{ .Values.namespace }}  # The namespace for this ConfigMap, dynamically pulled from values.yaml.
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Raz-Config-Web</title>  # The title of the webpage.
+      <style>
+        body {
+          background-color: #f0f0f0;  # Background color of the page.
+          font-family: Arial, sans-serif;  # Font style for the text.
+          text-align: center;  # Centers the content of the page.
+          padding-top: 50px;  # Adds some padding at the top of the page for better positioning.
         }
+
+        h1 {
+          color: #333;  # Text color for the header.
+        }
+
+        p {
+          color: red;  # Text color for the paragraph.
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Hello from This Is My Dev Page!</h1>  # Main header of the page.
+      <p>This page is served from a MountConfigMap.</p>  # A paragraph of text below the header.
+    </body>
+    </html>
+
 
         p {
            color: red;
