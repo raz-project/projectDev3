@@ -13,11 +13,11 @@ spec:
         - alert: HighCpuUsage
           expr: |
             (
-              sum by (pod, namespace) (
+                sum by (pod, namespace) (
                 rate(container_cpu_usage_seconds_total{container!="", image!=""}[5m])
-              )
+               )
               /
-              sum by (pod, namespace) (
+             sum by (pod, namespace) (
                 kube_pod_container_resource_limits_cpu_cores{resource="cpu"}
               )
             ) > 0.7
