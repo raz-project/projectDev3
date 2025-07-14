@@ -8,4 +8,4 @@ prometheus:
 
 grafana:
   enabled: true
-  adminPassword: admin
+  adminPassword: admin 
