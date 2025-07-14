@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx
-  namespace: { { .Values.namespace } }
+  namespace: {{ .Values.namespace }}
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: { { .Values.nginx.image } }
+          image: {{ .Values.nginx.image }}
           ports:
             - containerPort: 80
           volumeMounts:
